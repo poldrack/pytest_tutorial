@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import scipy.stats
-from rtanalysis import RTAnalysis
+
 
 def generate_test_df(meanRT, sdRT, meanAcc, n=100):
     """
@@ -47,16 +47,3 @@ def scale_values(values, mean, sd):
     assert np.allclose(np.mean(values), mean)
     assert np.allclose(np.std(values), sd)
     return(values)
-
-
-if __name__ == "__main__":
-    meanRT = 2.5
-    sdRT = 1.25
-    meanAcc = 0.9
-    n = 100
-
-    test_df = generate_test_df(meanRT, sdRT, meanAcc, n)
-
-    rta = RTAnalysis()
-    rta.fit(test_df.rt, test_df.accuracy)
-
