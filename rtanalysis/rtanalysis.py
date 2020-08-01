@@ -38,9 +38,7 @@ class RTAnalysis:
         except AssertionError:
             raise ValueError('rt and accuracy must be the same length!')
 
-        # ensure that RT's are non-negative
-        assert rt.min() >= 0
-        # ensure that accuracy values are boolean
+       # ensure that accuracy values are boolean
         assert len(set(accuracy.unique()).difference([True, False])) == 0
 
         if self.outlier_cutoff_sd is not None:
