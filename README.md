@@ -107,8 +107,17 @@ It's useful to have our tests run automatically whenever we push a commit to git
 
 1. Click on the "Actions" tab at the top of your repo page.
 2. Choose "Set up this workflow" for the "Python Application" suggestion.
-3. This will open an editor for a YAML file that defines the workflow. You should be able to use the default workflow, so save it using the "Start Commit" button.
-4. We need to push another commit to the repository in order to trigger the workflow.  You can do this by making an edit to any of the files (such as the README.md) file and then committing it.  
+3. This will open an editor for a YAML file that defines the workflow. You will need to make one change to the default, in order to install several libraries that our code requires.  Replace the following line:
+
+
+    pip install flake8 pytest
+
+with:
+
+    pip install flake8 pytest numpy pandas scipy
+
+Once you have made that change, save it using the "Start Commit" button.
+4. Return to the Actions tab, and you should see the action running. Once it completes, it should have a green check mark.
 
 ## TBD: Fixtures
 
