@@ -1,8 +1,10 @@
 # A basic pytest tutorial for data science
 
+![Python application](https://github.com/poldrack/pytest_tutorial/workflows/Python%20application/badge.svg)
+
 Resarchers often wish to know how to implement software testing for data science applications.  This tutorial provides an example of how to get started with software testing in the context of data science, using the pytest library for Python.
 
-The foregoing will assume that you have a fully configured scientific Python installation, and that you have installed the pytest package (``pip install -U pytest``).
+The foregoing will assume that you have a fully configured scientific Python installation, and that you have installed the pytest package (``pip install -U pytest``).  For this exercise you should fork a copy of the repository and clone it to your local machine.
 
 ## The setup
 
@@ -99,8 +101,14 @@ This is basically telling pytest that we expect this particular function to rais
 The existing code does not check for whether there are any negative response times in the input data.  In this exercise you will first write a new test function that generates an example data set, generate negative response times (e.g. by multiplying the response time variable by -1), and then generating a test that should only pass if the function raises a ValueException when a negative response time is found. Then, you should add an assertion statement to the ``RTAnalysis.fit()`` function that will raise a ValueError exception if there are any negative response times present.
 
 
-## TBD: Automating tests using Github Action
+## TBD: Automating tests using Github Actions
 
+It's useful to have our tests run automatically whenever we push a commit to github.  This kind of testing is known as "continuous integration" testing.  The Github Actions system makes this very easy to configure.
+
+1. Click on the "Actions" tab at the top of your repo page.
+2. Choose "Set up this workflow" for the "Python Application" suggestion.
+3. This will open an editor for a YAML file that defines the workflow. You should be able to use the default workflow, so save it using the "Start Commit" button.
+4. We need to push another commit to the repository in order to trigger the workflow.  You can do this by making an edit to any of the files (such as the README.md) file and then committing it.  
 
 ## TBD: Fixtures
 
