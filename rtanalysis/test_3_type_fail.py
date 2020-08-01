@@ -8,6 +8,9 @@ from rtanalysis.rtanalysis import RTAnalysis
 from rtanalysis.generate_testdata import generate_test_df
 
 
+# This xfail decorator tells pytest to run the test
+# but don't count it as a failure when it fails
+# (since we know it's going to fail)
 @pytest.mark.xfail
 def test_dataframe_error():
     rta = RTAnalysis()
