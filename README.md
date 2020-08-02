@@ -28,7 +28,7 @@ The resulting estimates are printed to the screen (assuming that the ``verbose``
 
 ## Test 1: A simple smoke test
 
-For our first test, let's simply instantiate the ``RTAnalysis`` class and ensure that the resulting object is not empty.  We call this a "smoke test" since it mostly just makes sure that things run and don't break --- it doesn't actually test the functionality.  This is done in [test_1_smoketest.py](rtanalysis/test_1_smoketest.py):
+For our first test, let's simply instantiate the ``RTAnalysis`` class and ensure that the resulting object is not empty.  We call this a "smoke test" since it mostly just makes sure that things run and don't break --- it doesn't actually test the functionality.  This is done in [test_1_smoketest.py](tests/test_1_smoketest.py):
 
     import pytest
     from rtanalysis.rtanalysis import RTAnalysis
@@ -39,7 +39,7 @@ For our first test, let's simply instantiate the ``RTAnalysis`` class and ensure
 
 We can run the test using pytest from the command line:
 
-    pytest_tutorial % pytest rtanalysis/test_1_smoketest.py
+    pytest_tutorial % python -m pytest tests/test_1_smoketest.py
     ==================================== test session starts =====================================
     platform darwin -- Python 3.8.3, pytest-5.4.1, py-1.8.1, pluggy-0.13.1
     rootdir: /Users/poldrack/Dropbox/code/pytest_tutorial
@@ -65,7 +65,7 @@ This data frame includes two series, called ``rt`` and ``accuracy`` that can be 
 
     rta.fit(test_df.rt, test_df.accuracy)
 
-Here is what our test function looks like:
+Here is what our test function looks like ([test_2_fit.py](tests/test_2_fit.py)):
 
     def test_rtanalysis_fit():
         rta = RTAnalysis()
@@ -85,14 +85,14 @@ Test 2 checked whether the our program performed as advertised. However,  as Mye
 
 > Examining a program to see if it does not do what it is supposed to do is only half the battle; the other half is seeing whether the program does what it is not supposed to do.
 
-That is, we need to try to cause the program to make errors, and make sure that it avoids them appropriately.  In this case, we will start by seeing what happens if our rt and accuracy series are of different sizes.  Let's first write a test to see what happens if we do this [test_3_type_fail.py](rtanalysis/test_3_type_fail.py):
+That is, we need to try to cause the program to make errors, and make sure that it avoids them appropriately.  In this case, we will start by seeing what happens if our rt and accuracy series are of different sizes.  Let's first write a test to see what happens if we do this [test_3_type_fail.py](tests/test_3_type_fail.py):
 
     def test_dataframe_error():
         rta = RTAnalysis()
         test_df = generate_test_df(2, 1, 0.8)
         rta.fit(test_df.rt, test_df.accuracy.loc[1:])
 
-If we run this test, we will see that it fails, due to the error that is raised by the function when the data are incorrectly sized.  (Note that we have told pytest to ignore this failure, so that it won't cause our entire test run to fail, using the ``@pytest.mark.xfail`` decorator.) This is the correct behavior on the part of our function, but it's not the correct behavior on the part of our test!  Instead, we want the test to succeed *if and only if* the correct exception is raised.  To do this, we can use the ``pytest.raises`` function as a context manager [test_3_type_success.py](rtanalysis/test_3_type_success.py):
+If we run this test, we will see that it fails, due to the error that is raised by the function when the data are incorrectly sized.  (Note that we have told pytest to ignore this failure, so that it won't cause our entire test run to fail, using the ``@pytest.mark.xfail`` decorator.) This is the correct behavior on the part of our function, but it's not the correct behavior on the part of our test!  Instead, we want the test to succeed *if and only if* the correct exception is raised.  To do this, we can use the ``pytest.raises`` function as a context manager [test_3_type_success.py](tests/test_3_type_success.py):
 
     def test_dataframe_error_with_raises():
         rta = RTAnalysis()
@@ -129,7 +129,7 @@ If you would like to add a badge to your README file that shows the status of th
 
 ## Test 4: Making a persistent fixture for testing
 
-Let's say that we want to create several tests, all of which use the same object. In this case, let's say that we want to create several tests that use the same simulated dataset.  We can do that by creating what we call a *fixture* in pytest, which is an object that can be passed into a test. In addition to a fixture containing the dataset, we also create a fixture to contain our parameters, so that they can be used for testing (see [test_4_fixture.py](rtanalysis/test_4_fixture.py)):
+Let's say that we want to create several tests, all of which use the same object. In this case, let's say that we want to create several tests that use the same simulated dataset.  We can do that by creating what we call a *fixture* in pytest, which is an object that can be passed into a test. In addition to a fixture containing the dataset, we also create a fixture to contain our parameters, so that they can be used for testing (see [test_4_fixture.py](tests/test_4_fixture.py)):
 
 
     @pytest.fixture
@@ -161,7 +161,7 @@ Let's say that we want to create several tests, all of which use the same object
 
 ## Test 5: Parametric tests
 
-Sometimes we wish to test a function across multiple values of a parameter.  For example, let's say that we want to make sure that our function works for response times that are coded either in seconds or milliseconds.  We can run the same test with different parameters in pytest using the ``@pytest.mark.parametrize`` decorator.
+Sometimes we wish to test a function across multiple values of a parameter.  For example, let's say that we want to make sure that our function works for response times that are coded either in seconds or milliseconds.  We can run the same test with different parameters in pytest using the ``@pytest.mark.parametrize`` decorator ([test_5_parametric.py](tests/test_5_parametric.py)).
 
 
     @pytest.mark.parametrize("meanRT, sdRT, meanAcc",
@@ -185,21 +185,60 @@ This loops through each of the sets of parameters for the three variables.  It c
 
 It can be useful to know which portions of our code are actually being exercised by our tests. There are various types of test coverage; we will focus here on simply assessing whether each line in the code has been covered, but see The Art of Software Testing](http://barbie.uta.edu/~mehra/Book1_The%20Art%20of%20Software%20Testing.pdf) for much more on this topic.
 
-We can assess the degree to which our tests cover our code using the Coverage.py tool (``pip install coverage``) with the pytest-cov extension (``pip install pytest-cov``).   With these installed, we simply add the ``--cov`` argument to our pytest commandm, which will give us a coverage report:
+We can assess the degree to which our tests cover our code using the Coverage.py tool (``pip install coverage``) with the pytest-cov extension (``pip install pytest-cov``).   With these installed, we simply add the ``--cov`` argument to our pytest commandm, which will give us a coverage report. We will specify the code directory so that the coverage is only computed for our code of interest, not for the tests themselves:
+
+    pytest_tutorial % python -m pytest --cov=rtanalysis
+    ==================================================================================== test session starts ====================================================================================
+    platform darwin -- Python 3.8.3, pytest-5.4.1, py-1.8.1, pluggy-0.13.1
+    rootdir: /Users/poldrack/Dropbox/code/pytest_tutorial
+    plugins: cov-2.10.0
+    collected 9 items                                                                                                                                                                           
+
+    tests/test_1_smoketest.py .                                                                                                                                                           [ 11%]
+    tests/test_2_fit.py .                                                                                                                                                                 [ 22%]
+    tests/test_3_type_fail.py x                                                                                                                                                           [ 33%]
+    tests/test_3_type_success.py .                                                                                                                                                        [ 44%]
+    tests/test_4_fixture.py ..                                                                                                                                                            [ 66%]
+    tests/test_5_parametric.py ...                                                                                                                                                        [100%]
 
     ---------- coverage: platform darwin, python 3.8.3-final-0 -----------
-    Name                                Stmts   Miss  Cover
-    -------------------------------------------------------
-    rtanalysis/__init__.py                  0      0   100%
-    rtanalysis/generate_testdata.py        15      0   100%
-    rtanalysis/rtanalysis.py               34      5    85%
-    rtanalysis/test_1_smoketest.py          5      0   100%
-    rtanalysis/test_2_fit.py               12      0   100%
-    rtanalysis/test_3_type_fail.py          8      0   100%
-    rtanalysis/test_3_type_success.py       8      0   100%
-    rtanalysis/test_4_fixture.py           19      0   100%
-    rtanalysis/test_5_parametric.py        14      0   100%
-    -------------------------------------------------------
-    TOTAL                                 115      5    96%
+    Name                              Stmts   Miss  Cover
+    -----------------------------------------------------
+    rtanalysis/__init__.py                0      0   100%
+    rtanalysis/generate_testdata.py      15      0   100%
+    rtanalysis/rtanalysis.py             34      5    85%
+    -----------------------------------------------------
+    TOTAL                                49      5    90%
 
-We should focus mostly here on the actual functions rather than the test functions
+
+    =============================================================================== 8 passed, 1 xfailed in 1.10s ================================================================================
+
+Now we see that our pytest output also includes a coverage report, which tells us that we have only covered 85% of the statements in rtanalysis.py.  We can look further at which statements we are missing using the ``coverage annotate`` function, which generates a set of files that are annotated with regard to which statements have been covered:
+
+    pytest_tutorial % coverage annotate
+    pytest_tutorial % ls -1 rtanalysis
+    __init__.py
+    __init__.py,cover
+    __pycache__
+    generate_testdata.py
+    generate_testdata.py,cover
+    rtanalysis.py
+    rtanalysis.py,cover
+
+We see here that the annotation function has generated a set of files with the suffix ",cover".  Each line in this file is marked with a ``>`` symbol if it was covered in the testing, and a ``!`` symbol if it was not.  From this, we can see that there were two sections in the code that were not covered:
+
+    >         if self.outlier_cutoff_sd is not None:
+    !             cutoff = rt.std() * self.outlier_cutoff_sd
+    !             if verbose:
+    !                 print(f'outlier rejection excluded {(rt > cutoff).sum()} trials')
+    !             rt = rt.mask(rt > cutoff)
+
+and
+
+    >         if type(var) is not pd.core.series.Series:
+    !             var = pd.Series(var)
+
+
+## Exercise 2
+
+Generate two new tests that will cause these two sections of code to be executed and thus raise coverage of rtanalysis.py to 100%.
