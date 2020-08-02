@@ -115,14 +115,12 @@ It's useful to have our tests run automatically whenever we push a commit to git
 2. Choose "Set up this workflow" for the "Python Application" suggestion.
 3. This will open an editor for a YAML file that defines the workflow. You will need to make one change to the default, in order to install several libraries that our code requires.  Replace the following line:
 
+        pip install flake8 pytest
 
-    pip install flake8 pytest
+    with:
 
-with:
-
-    pip install flake8 pytest numpy pandas scipy
-
-Once you have made that change, save it using the "Start Commit" button.
+        pip install flake8 pytest numpy pandas scipy
+    Once you have made that change, save it using the "Start Commit" button.
 4. Return to the Actions tab, and you should see the action running. Once it completes, it should have a green check mark.
 
 If you would like to add a badge to your README file that shows the status of this test, you can copy a snippet of Markdown using the "Create status badge" button the action, and then insert that into your README.
