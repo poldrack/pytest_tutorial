@@ -109,7 +109,7 @@ The existing code does not check for whether there are any negative response tim
 
 ## Automating tests using Github Actions
 
-It's useful to have our tests run automatically whenever we push a commit to github.  This kind of testing is known as "continuous integration" testing.  The Github Actions system makes this very easy to configure.
+It's useful to have our tests run automatically whenever we push a commit to github.  This kind of testing is known as "continuous integration" testing.  The Github Actions system makes this very easy to configure. To do the following, you will first need to remove the .github/workflows/python-app.yml from your fork and then commit that change and push it to github.
 
 1. Click on the "Actions" tab at the top of your repo page.
 2. Choose "Set up this workflow" for the "Python Application" suggestion.
