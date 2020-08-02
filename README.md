@@ -183,7 +183,7 @@ This loops through each of the sets of parameters for the three variables.  It c
 
 ## Test coverage
 
-It can be useful to know which portions of our code are actually being exercised by our tests. There are various types of test coverage; we will focus here on simply assessing whether each line in the code has been covered, but see The Art of Software Testing](http://barbie.uta.edu/~mehra/Book1_The%20Art%20of%20Software%20Testing.pdf) for much more on this topic.
+It can be useful to know which portions of our code are actually being exercised by our tests. There are various types of test coverage; we will focus here on simply assessing whether each line in the code has been covered, but see [The Art of Software Testing](http://barbie.uta.edu/~mehra/Book1_The%20Art%20of%20Software%20Testing.pdf) for much more on this topic.
 
 We can assess the degree to which our tests cover our code using the Coverage.py tool (``pip install coverage``) with the pytest-cov extension (``pip install pytest-cov``).   With these installed, we simply add the ``--cov`` argument to our pytest commandm, which will give us a coverage report. We will specify the code directory so that the coverage is only computed for our code of interest, not for the tests themselves:
 
