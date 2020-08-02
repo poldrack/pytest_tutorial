@@ -38,7 +38,7 @@ class RTAnalysis:
         except AssertionError:
             raise ValueError('rt and accuracy must be the same length!')
 
-       # ensure that accuracy values are boolean
+        # ensure that accuracy values are boolean
         assert len(set(accuracy.unique()).difference([True, False])) == 0
 
         if self.outlier_cutoff_sd is not None:
@@ -47,9 +47,14 @@ class RTAnalysis:
                 print(f'outlier rejection excluded {(rt > cutoff).sum()} trials')
             rt = rt.mask(rt > cutoff)
 
+        self.meanacc_ = accuracy.mean()
+        try:
+            assert self.meanacc_ > 0
+        except:
+            raise ValueError('accuracy is zero')
+
         rt = rt.mask(~accuracy)
         self.meanrt_ = rt.mean()
-        self.meanacc_ = accuracy.mean()
 
         if verbose:
             print(f'mean RT: {self.meanrt_}')
