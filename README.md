@@ -6,6 +6,12 @@ Resarchers often wish to know how to implement software testing for data science
 
 The foregoing will assume that you have a fully configured scientific Python installation, and that you have installed the pytest package (``pip install -U pytest``).  For this exercise you should fork a copy of the repository and clone it to your local machine.
 
+Most of the content here is basic Python, but there are several concepts that you should have at least a basic familarity with:
+
+- [Decorators](https://www.geeksforgeeks.org/decorators-in-python/) are a syntactic element in Python that modify the operation of a function.  
+- [Exceptions](https://realpython.com/python-exceptions/) are signals that are emitted when an error occurs during the execution of a program. Importantly, exceptions are Python objects that have a specific type that is specified by the code that raises the exception.  For example, if one tries to open a non-existent file using ``open()``, it will raise a ``FileNotFoundError`` exception, whereas if one tries to divide by zero the Python interpreter will raise a ``ZeroDivisionError`` exception.
+- [Context managers](https://book.pythontips.com/en/latest/context_managers.html) are a syntatic element that are usually used to control resources like file or database handles, but can also be used to monitor and control the operation of a set of functions, which will be useful when we are looking for specific exceptions.
+
 ## The setup
 
 The goal of this project is to develop a set of tests for a simple Python class that computes the mean response time and accuracy from raw response time and accuracy values, using only the correct response times. The ``RTAnalysis`` class defined in [rtanalysis.py](rtanalysis/rtanalysis.py) uses an interface patterned after the analysis methods in scikit-learn.  To use it, we first instantiate the RTAnalysis object:
@@ -79,20 +85,20 @@ Test 2 checked whether the our program performed as advertised. However,  as Mye
 
 > Examining a program to see if it does not do what it is supposed to do is only half the battle; the other half is seeing whether the program does what it is not supposed to do.
 
-That is, we need to try to cause the program to make errors, and make sure that it avoids them appropriately.  In this case, we will start by seeing what happens if we give the function rt and accuracy series of different sizes.  Let's first write a test to see what happens if we do this [test_3_type_fail.py](rtanalysis/test_3_type_fail.py):
+That is, we need to try to cause the program to make errors, and make sure that it avoids them appropriately.  In this case, we will start by seeing what happens if our rt and accuracy series are of different sizes.  Let's first write a test to see what happens if we do this [test_3_type_fail.py](rtanalysis/test_3_type_fail.py):
 
     def test_dataframe_error():
         rta = RTAnalysis()
         test_df = generate_test_df(2, 1, 0.8)
-        rta.fit(test_df.rt, test_df.accuracy.loc[:10])
+        rta.fit(test_df.rt, test_df.accuracy.loc[1:])
 
-If we run this test, we will see that it fails, due to the error that is raised by the function when the data are incorrectly sized.  This is the correct behavior on the part of our function, but it's not the correct behavior on the part of our test!  Instead, we want the test to succeed *if and only if* the correct exception is raised.  To do this, we can use the ``pytest.raises`` function as a context manager [test_3_type_success.py](rtanalysis/test_3_type_success.py):
+If we run this test, we will see that it fails, due to the error that is raised by the function when the data are incorrectly sized.  (Note that we have told pytest to ignore this failure, so that it won't cause our entire test run to fail, using the ``@pytest.mark.xfail`` decorator.) This is the correct behavior on the part of our function, but it's not the correct behavior on the part of our test!  Instead, we want the test to succeed *if and only if* the correct exception is raised.  To do this, we can use the ``pytest.raises`` function as a context manager [test_3_type_success.py](rtanalysis/test_3_type_success.py):
 
     def test_dataframe_error_with_raises():
         rta = RTAnalysis()
         test_df = generate_test_df(2, 1, 0.8)
         with pytest.raises(ValueError):
-            rta.fit(test_df.rt, test_df.accuracy.loc[:10])
+            rta.fit(test_df.rt, test_df.accuracy.loc[1:])
 
 This is basically telling pytest that we expect this particular function to raise a ValueError exception, and that the test should fail if this particular exception is *not* raised.
 
@@ -101,7 +107,7 @@ This is basically telling pytest that we expect this particular function to rais
 The existing code does not check for whether there are any negative response times in the input data.  In this exercise you will first write a new test function that generates an example data set, generate negative response times (e.g. by multiplying the response time variable by -1), and then generating a test that should only pass if the function raises a ValueException when a negative response time is found. Then, you should add an assertion statement to the ``RTAnalysis.fit()`` function that will raise a ValueError exception if there are any negative response times present.
 
 
-## TBD: Automating tests using Github Actions
+## Automating tests using Github Actions
 
 It's useful to have our tests run automatically whenever we push a commit to github.  This kind of testing is known as "continuous integration" testing.  The Github Actions system makes this very easy to configure.
 
@@ -119,9 +125,81 @@ with:
 Once you have made that change, save it using the "Start Commit" button.
 4. Return to the Actions tab, and you should see the action running. Once it completes, it should have a green check mark.
 
-## TBD: Fixtures
+If you would like to add a badge to your README file that shows the status of this test, you can copy a snippet of Markdown using the "Create status badge" button the action, and then insert that into your README.
+
+## Test 4: Making a persistent fixture for testing
+
+Let's say that we want to create several tests, all of which use the same object. In this case, let's say that we want to create several tests that use the same simulated dataset.  We can do that by creating what we call a *fixture* in pytest, which is an object that can be passed into a test. In addition to a fixture containing the dataset, we also create a fixture to contain our parameters, so that they can be used for testing (see [test_4_fixture.py](rtanalysis/test_4_fixture.py)):
 
 
-## TBD: Parametric tests
+    @pytest.fixture
+    def params():
+        return({'meanRT': 2.1,
+                'sdRT': 0.9,
+                'meanAcc': 0.8})
 
 
+    @pytest.fixture
+    def simulated_data(params):
+        return(generate_test_df(
+            params['meanRT'], params['sdRT'], params['meanAcc']))
+
+
+    def test_rtanalysis_fit(simulated_data, params):
+        rta = RTAnalysis()
+        rta.fit(simulated_data.rt, simulated_data.accuracy)
+        assert np.allclose(params['meanRT'], rta.meanrt_)
+        assert np.allclose(params['meanAcc'], rta.meanacc_)
+
+
+    def test_rtanalysis_checkfail(simulated_data, params):
+        rta = RTAnalysis()
+        with pytest.raises(ValueError):
+            rta.fit(simulated_data.rt,
+                    simulated_data.accuracy.loc[1:]) 
+
+
+## Test 5: Parametric tests
+
+Sometimes we wish to test a function across multiple values of a parameter.  For example, let's say that we want to make sure that our function works for response times that are coded either in seconds or milliseconds.  We can run the same test with different parameters in pytest using the ``@pytest.mark.parametrize`` decorator.
+
+
+    @pytest.mark.parametrize("meanRT, sdRT, meanAcc",
+                            [(1.5, 1.0, 0.9),
+                             (1500, 1000, 0.9),
+                             (1.5, 1.0, 0)])
+    def test_rtanalysis_parameteric(meanRT, sdRT, meanAcc):
+        test_df = generate_test_df(meanRT, sdRT, meanAcc)
+        rta = RTAnalysis()
+        if meanAcc > 0:
+            rta.fit(test_df.rt, test_df.accuracy)
+            assert np.allclose(meanRT, rta.meanrt_)
+            assert np.allclose(meanAcc, rta.meanacc_)
+        else:
+            with pytest.raises(ValueError):
+                rta.fit(test_df.rt, test_df.accuracy)
+
+This loops through each of the sets of parameters for the three variables.  It checks whether the function runs appropriately for each level, unless accuracy is equal to zero, in which case it ensure that the function raises the appropriate ``ValueError`` exception.
+
+## Test coverage
+
+It can be useful to know which portions of our code are actually being exercised by our tests. There are various types of test coverage; we will focus here on simply assessing whether each line in the code has been covered, but see The Art of Software Testing](http://barbie.uta.edu/~mehra/Book1_The%20Art%20of%20Software%20Testing.pdf) for much more on this topic.
+
+We can assess the degree to which our tests cover our code using the Coverage.py tool (``pip install coverage``) with the pytest-cov extension (``pip install pytest-cov``).   With these installed, we simply add the ``--cov`` argument to our pytest commandm, which will give us a coverage report:
+
+    ---------- coverage: platform darwin, python 3.8.3-final-0 -----------
+    Name                                Stmts   Miss  Cover
+    -------------------------------------------------------
+    rtanalysis/__init__.py                  0      0   100%
+    rtanalysis/generate_testdata.py        15      0   100%
+    rtanalysis/rtanalysis.py               34      5    85%
+    rtanalysis/test_1_smoketest.py          5      0   100%
+    rtanalysis/test_2_fit.py               12      0   100%
+    rtanalysis/test_3_type_fail.py          8      0   100%
+    rtanalysis/test_3_type_success.py       8      0   100%
+    rtanalysis/test_4_fixture.py           19      0   100%
+    rtanalysis/test_5_parametric.py        14      0   100%
+    -------------------------------------------------------
+    TOTAL                                 115      5    96%
+
+We should focus mostly here on the actual functions rather than the test functions
