@@ -44,6 +44,4 @@ def scale_values(values, mean, sd):
     values = values * (sd / np.std(values))
     values = (values - np.mean(values)) + mean
 
-    assert np.allclose(np.mean(values), mean)
-    assert np.allclose(np.std(values), sd)
     return(values)
