@@ -34,3 +34,11 @@ jobs:
     - name: Test with pytest
       run: |
         python -m pytest 
+    - name: Archive test results
+      uses: actions/upload-artifact@v2
+      with:
+          name: test-result-junit
+          path: |
+            target/surefire-reports/
+            **/target/surefire-reports/
+            **/*/
