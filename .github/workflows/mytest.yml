@@ -35,12 +35,12 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        python -m pytest 
+        mkdir test-results
+        python -m pytest --junitxml=test-results/junit.xml
     - name: Archive test results
       uses: actions/upload-artifact@v2
       with:
           name: test-result-junit
           path: |
-            target/surefire-reports/
-            **/target/surefire-reports/
-            **/*/
+            test-results/
+            **/test-results/
