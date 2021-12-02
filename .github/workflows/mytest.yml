@@ -42,5 +42,4 @@ jobs:
       with:
           name: test-result-junit
           path: |
-            test-results/
-            **/test-results/
+            /home/runner/work/pytest_tutorial/pytest_tutorial/test-results/
