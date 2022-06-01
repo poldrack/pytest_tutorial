@@ -18,3 +18,15 @@ def test_rtanalysis_fit():
     rta.fit(test_df.rt, test_df.accuracy)
     assert np.allclose(meanRT, rta.meanrt_)
     assert np.allclose(meanAcc, rta.meanacc_)
+    
+    
+  
+def test_rtanalysis_fit2():
+    rta = RTAnalysis()
+    meanRT = 2.1
+    sdRT = 0.9
+    meanAcc = 0.8
+    test_df = generate_test_df(meanRT, sdRT, meanAcc)
+    rta.fit(test_df.rt, test_df.accuracy)
+    assert np.allclose(meanRT, rta.meanrt_)
+    assert np.allclose(meanAcc, rta.meanacc_)
