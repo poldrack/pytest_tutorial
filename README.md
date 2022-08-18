@@ -19,7 +19,7 @@ The goal of this project is to develop a set of tests for a simple Python class 
     from rtanalysis.rtanalysis import RTAnalysis
     rta = RTAnalysis()
 
-The data to be analyzed should be stored in two pandas Series of the same size, one containing response times (non-negative floating point numbers) and another containing accuracy values for each trial (Boolean values).  Assuming those variables are called ``rt`` and ``accuracy`` respectively, the model can be fit using:
+The data to be analyzed should be stored in two pandas Series of the same size, one containing response times (non-negative floating point numbers) and another containing accuracy values for each trial [(Boolean values)](https://www.scaler.com/topics/python/boolean-operators-in-python/).  Assuming those variables are called ``rt`` and ``accuracy`` respectively, the model can be fit using:
 
     rta.fit(rt, accuracy)
 
