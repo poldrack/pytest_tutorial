@@ -12,26 +12,24 @@ from rtanalysis.rtanalysis import RTAnalysis
 
 @pytest.fixture
 def params():
-    return({'meanRT': 2.1,
-            'sdRT': 0.9,
-            'meanAcc': 0.8})
+    return {"meanRT": 2.1, "sdRT": 0.9, "meanAcc": 0.8}
 
 
 @pytest.fixture
 def simulated_data(params):
-    return(generate_test_df(
-        params['meanRT'], params['sdRT'], params['meanAcc']))
+    return generate_test_df(params["meanRT"], params["sdRT"], params["meanAcc"])
 
 
 def test_rtanalysis_fit(simulated_data, params):
     rta = RTAnalysis()
     rta.fit(simulated_data.rt, simulated_data.accuracy)
-    assert np.allclose(params['meanRT'], rta.meanrt_)
-    assert np.allclose(params['meanAcc'], rta.meanacc_)
+    assert np.allclose(params["meanRT"], rta.meanrt_)
+    assert np.allclose(params["meanAcc"], rta.meanacc_)
 
 
 def test_rtanalysis_checkfail(simulated_data, params):
     rta = RTAnalysis()
     with pytest.raises(ValueError):
-        rta.fit(simulated_data.rt,
-                simulated_data.accuracy.loc[1:])  # omit first datapoint
+        rta.fit(
+            simulated_data.rt, simulated_data.accuracy.loc[1:]
+        )  # omit first datapoint
