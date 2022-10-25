@@ -4,11 +4,10 @@ test for rtanalysis
 and use it across multiple tests
 - we also create a separate fixture to hold the parameters
 """
-
-import pytest
 import numpy as np
-from rtanalysis.rtanalysis import RTAnalysis
+import pytest
 from rtanalysis.generate_testdata import generate_test_df
+from rtanalysis.rtanalysis import RTAnalysis
 
 
 @pytest.fixture
