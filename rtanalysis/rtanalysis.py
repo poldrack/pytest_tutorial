@@ -8,8 +8,8 @@ import pandas as pd
 
 # %%
 class RTAnalysis:
-    """[summary]
-    """
+    """[summary]"""
+
     def __init__(self, outlier_cutoff_sd=None):
         """
         RT analysis
@@ -35,30 +35,30 @@ class RTAnalysis:
 
         try:
             assert rt.shape[0] == accuracy.shape[0]
-        except AssertionError:
-            raise ValueError('rt and accuracy must be the same length!')
+        except AssertionError as e:
+            raise ValueError("rt and accuracy must be the same length!") from e
 
         # ensure that accuracy values are boolean
-        assert len(set(accuracy.unique()).difference([True, False])) == 0
+        assert not set(accuracy.unique()).difference([True, False])
 
         if self.outlier_cutoff_sd is not None:
             cutoff = rt.std() * self.outlier_cutoff_sd
             if verbose:
-                print(f'outlier rejection excluded {(rt > cutoff).sum()} trials')
+                print(f"outlier rejection excluded {(rt > cutoff).sum()} trials")
             rt = rt.mask(rt > cutoff)
 
         self.meanacc_ = accuracy.mean()
         try:
             assert self.meanacc_ > 0
-        except:
-            raise ValueError('accuracy is zero')
+        except AssertionError as e:
+            raise ValueError("accuracy is zero") from e
 
         rt = rt.mask(~accuracy)
         self.meanrt_ = rt.mean()
 
         if verbose:
-            print(f'mean RT: {self.meanrt_}')
-            print(f'mean accuracy: {self.meanacc_}')
+            print(f"mean RT: {self.meanrt_}")
+            print(f"mean accuracy: {self.meanacc_}")
 
     @staticmethod
     def _ensure_series_type(var):
@@ -74,4 +74,4 @@ class RTAnalysis:
 
         if type(var) is not pd.core.series.Series:
             var = pd.Series(var)
-        return(var)
+        return var

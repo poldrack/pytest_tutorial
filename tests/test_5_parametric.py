@@ -4,15 +4,15 @@ test for rtanalysis
 and make sure that the function properly raises
 and exception is accuracy is zero
 """
-
-import pytest
 import numpy as np
-from rtanalysis.rtanalysis import RTAnalysis
+import pytest
 from rtanalysis.generate_testdata import generate_test_df
+from rtanalysis.rtanalysis import RTAnalysis
 
-@pytest.mark.parametrize("meanRT, sdRT, meanAcc",
-                         [(1.5, 1.0, 0.9), (1500, 1000, 0.9),
-                         (1.5, 1.0, 0)])
+
+@pytest.mark.parametrize(
+    "meanRT, sdRT, meanAcc", [(1.5, 1.0, 0.9), (1500, 1000, 0.9), (1.5, 1.0, 0)]
+)
 def test_rtanalysis_parameteric(meanRT, sdRT, meanAcc):
     test_df = generate_test_df(meanRT, sdRT, meanAcc)
     rta = RTAnalysis()

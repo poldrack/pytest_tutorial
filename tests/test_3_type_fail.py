@@ -2,10 +2,9 @@
 test for rtanalysis
 - in this test, we will ensure that the function raises a ValueError
 """
-
 import pytest
-from rtanalysis.rtanalysis import RTAnalysis
 from rtanalysis.generate_testdata import generate_test_df
+from rtanalysis.rtanalysis import RTAnalysis
 
 
 # This xfail decorator tells pytest to run the test
