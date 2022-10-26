@@ -48,17 +48,13 @@ class RTAnalysis:
         # Ensure that accuracy values are boolean.
         assert accuracy.dtype == bool
 
-        if self.outlier_cutoff_sd is not None:
-            cutoff = rt.std() * self.outlier_cutoff_sd
-            if verbose:
-                print(f"outlier rejection excluded {(rt > cutoff).sum()} trials")
-            rt = rt.mask(rt > cutoff)
+        rt = self.reject_outlier_rt(rt, verbose=verbose)
 
         self.mean_accuracy_ = accuracy.mean()
         try:
             assert self.mean_accuracy_ > 0
         except AssertionError as e:
-            raise ValueError("accuracy is zero") from e
+            raise ValueError("Accuracy is zero!") from e
 
         rt = rt.mask(~accuracy)
         self.mean_rt_ = rt.mean()
@@ -107,3 +103,12 @@ class RTAnalysis:
         if not isinstance(var, pd.Series):
             var = pd.Series(var)
         return var
+
+    def reject_outlier_rt(self, rt, verbose=True):
+        if self.outlier_cutoff_sd is None:
+            return rt
+        cutoff = rt.std() * self.outlier_cutoff_sd
+        if verbose:
+            n_excluded = (rt > cutoff).sum()
+            print(f"Outlier rejection excluded {n_excluded} trials.")
+        return rt.mask(rt > cutoff)        
