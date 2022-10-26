@@ -18,8 +18,8 @@ class RTAnalysis:
             Standard deviation cutoff for long RT outliers, by default None
         """
         self.outlier_cutoff_sd = outlier_cutoff_sd
-        self.meanrt_ = None
-        self.meanacc_ = None
+        self.mean_rt_ = None
+        self.mean_accuracy_ = None
 
     def fit(self, rt, accuracy, verbose=True):
         """Fit response time to accuracy.
@@ -57,18 +57,18 @@ class RTAnalysis:
                 print(f"outlier rejection excluded {(rt > cutoff).sum()} trials")
             rt = rt.mask(rt > cutoff)
 
-        self.meanacc_ = accuracy.mean()
+        self.mean_accuracy_ = accuracy.mean()
         try:
-            assert self.meanacc_ > 0
+            assert self.mean_accuracy_ > 0
         except AssertionError as e:
             raise ValueError("accuracy is zero") from e
 
         rt = rt.mask(~accuracy)
-        self.meanrt_ = rt.mean()
+        self.mean_rt_ = rt.mean()
 
         if verbose:
-            print(f"mean RT: {self.meanrt_}")
-            print(f"mean accuracy: {self.meanacc_}")
+            print(f"mean RT: {self.mean_rt_}")
+            print(f"mean accuracy: {self.mean_accuracy_}")
 
     @staticmethod
     def _ensure_series_type(var):
