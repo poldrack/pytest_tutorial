@@ -45,8 +45,8 @@ class RTAnalysis:
 
         self._validate_length(rt, accuracy)
 
-        # ensure that accuracy values are boolean
-        assert not set(accuracy.unique()).difference([True, False])
+        # Ensure that accuracy values are boolean.
+        assert accuracy.dtype == bool
 
         if self.outlier_cutoff_sd is not None:
             cutoff = rt.std() * self.outlier_cutoff_sd
@@ -69,6 +69,20 @@ class RTAnalysis:
     
     @staticmethod
     def _validate_length(rt, accuracy):
+        """Validate response time and accuracy series lengths.
+
+        Parameters
+        ----------
+        rt : pd.Series
+            Response time values
+        accuracy : _type_
+            Accuracy values
+
+        Raises
+        ------
+        ValueError
+            Length mismatch
+        """
         same_length = rt.shape[0] == accuracy.shape[0]
         try:
             assert same_length
