@@ -18,8 +18,8 @@ def test_rtanalysis_parameteric(meanRT, sdRT, meanAcc):
     rta = RTAnalysis()
     if meanAcc > 0:
         rta.fit(test_df.rt, test_df.accuracy)
-        assert np.allclose(meanRT, rta.meanrt_)
-        assert np.allclose(meanAcc, rta.meanacc_)
+        assert np.allclose(meanRT, rta.mean_rt_)
+        assert np.allclose(meanAcc, rta.mean_accuracy_)
     else:
         with pytest.raises(ValueError):
             rta.fit(test_df.rt, test_df.accuracy)
