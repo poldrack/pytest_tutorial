@@ -3,11 +3,9 @@
 Given a data frame with RT and accuracy, compute mean RT for correct trials and
 mean accuracy.
 """
-# %%
 import pandas as pd
 
 
-# %%
 class RTAnalysis:
     """Response time (RT) analysis."""
 
