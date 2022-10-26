@@ -43,10 +43,7 @@ class RTAnalysis:
         rt = self._ensure_series_type(rt)
         accuracy = self._ensure_series_type(accuracy)
 
-        try:
-            assert rt.shape[0] == accuracy.shape[0]
-        except AssertionError as e:
-            raise ValueError("rt and accuracy must be the same length!") from e
+        self._validate_length(rt, accuracy)
 
         # ensure that accuracy values are boolean
         assert not set(accuracy.unique()).difference([True, False])
@@ -69,6 +66,15 @@ class RTAnalysis:
         if verbose:
             print(f"mean RT: {self.mean_rt_}")
             print(f"mean accuracy: {self.mean_accuracy_}")
+    
+    @staticmethod
+    def _validate_length(rt, accuracy):
+        same_length = rt.shape[0] == accuracy.shape[0]
+        try:
+            assert same_length
+        except AssertionError as e:
+            raise ValueError("RT and accuracy must be the same length!") from e
+
 
     @staticmethod
     def _ensure_series_type(var):
