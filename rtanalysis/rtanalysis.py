@@ -84,6 +84,6 @@ class RTAnalysis:
         pd.Series
             Variable values as a pandas Series
         """
-        if type(var) is not pd.core.series.Series:
+        if not isinstance(var, pd.Series):
             var = pd.Series(var)
         return var
