@@ -1,6 +1,7 @@
-"""example function to analyze reaction times
-- given a data frame with RT and accuracy,
-compute mean RT for correct trials and mean accuracy
+"""Example class to analyze reaction times.
+
+Given a data frame with RT and accuracy, compute mean RT for correct trials and
+mean accuracy.
 """
 # %%
 import pandas as pd
@@ -8,28 +9,39 @@ import pandas as pd
 
 # %%
 class RTAnalysis:
-    """[summary]"""
+    """Response time (RT) analysis."""
 
     def __init__(self, outlier_cutoff_sd=None):
-        """
-        RT analysis
+        """Initialize a new RTAnalysis instance.
 
-        Parameters:
-        -----------
-        outlier_cutoff_sd: standard deviation cutoff for long RT outliers (default: no cutoff)
+        Parameters
+        ----------
+        outlier_cutoff_sd : float, optional
+            Standard deviation cutoff for long RT outliers, by default None
         """
         self.outlier_cutoff_sd = outlier_cutoff_sd
         self.meanrt_ = None
         self.meanacc_ = None
 
     def fit(self, rt, accuracy, verbose=True):
-        """[summary]
+        """Fit response time to accuracy.
 
-        Args:
-            rt (Series of floats): response times for each trial
-            accuracy (Series of booleans): accuracy for each trial
+        Parameters
+        ----------
+        rt : pd.Series
+            Response time per trial
+        accuracy : pd.Series
+            Accuracy per trial
+        verbose : bool, optional
+            Whether to print verbose output or not, by default True
+
+        Raises
+        ------
+        ValueError
+            RT/accuracy length mismatch
+        ValueError
+            Accuracy is 0
         """
-
         rt = self._ensure_series_type(rt)
         accuracy = self._ensure_series_type(accuracy)
 
@@ -62,16 +74,18 @@ class RTAnalysis:
 
     @staticmethod
     def _ensure_series_type(var):
-        """return variable as a pandas Series or raise exception if
-        not possible
+        """Return variable as a pandas Series.
 
-        Args:
-            var (array-like): variable to convert
+        Parameters
+        ----------
+        var : Iterable
+            Variable to be converted
 
-        Returns:
-            series (pandas Series): converted variable
+        Returns
+        -------
+        pd.Series
+            Variable values as a pandas Series
         """
-
         if type(var) is not pd.core.series.Series:
             var = pd.Series(var)
         return var
