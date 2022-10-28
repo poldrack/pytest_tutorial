@@ -1,6 +1,5 @@
 """test suite for rtanalysis
 """
-import pytest
 from rtanalysis.rtanalysis import RTAnalysis
 
 

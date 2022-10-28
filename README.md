@@ -28,7 +28,7 @@ The data to be analyzed should be stored in two pandas Series of the same size, 
 rta.fit(rt, accuracy)
 ```
 
-The resulting estimates are printed to the screen (assuming that the `verbose` flag is not set to false) and also stored to internal variables `rta.meanrt_` and `rta.meanacc_`.
+The resulting estimates are printed to the screen (assuming that the `verbose` flag is not set to false) and also stored to internal variables `rta.mean_rt_` and `rta.mean_accuracy_`.
 
 ## Test 1: A simple smoke test
 
@@ -95,8 +95,8 @@ def test_rtanalysis_fit():
     rta = RTAnalysis()
     rta.fit(test_df.rt, test_df.accuracy)
 
-    assert np.allclose(meanRT, rta.meanrt_)
-    assert np.allclose(meanAcc, rta.meanacc_)
+    assert np.allclose(meanRT, rta.mean_rt_)
+    assert np.allclose(meanAcc, rta.mean_accuracy_)
 ```
 
 We generate the data with known mean and accuracy values, fit the model using our function, and then confirm that our estimates are basically equal to the actual values. We use `np.allclose()` rather than a test for equality because sometimes the values will be off by a very small amount due to the numerical precision of the computer; an equality test would treat those as different, but `np.allclose` allows some tolerance in its test.
@@ -174,8 +174,8 @@ def simulated_data(params):
 def test_rtanalysis_fit(simulated_data, params):
     rta = RTAnalysis()
     rta.fit(simulated_data.rt, simulated_data.accuracy)
-    assert np.allclose(params['meanRT'], rta.meanrt_)
-    assert np.allclose(params['meanAcc'], rta.meanacc_)
+    assert np.allclose(params['meanRT'], rta.mean_rt_)
+    assert np.allclose(params['meanAcc'], rta.mean_accuracy_)
 
 
 def test_rtanalysis_checkfail(simulated_data, params):
@@ -199,8 +199,8 @@ def test_rtanalysis_parameteric(meanRT, sdRT, meanAcc):
     rta = RTAnalysis()
     if meanAcc > 0:
         rta.fit(test_df.rt, test_df.accuracy)
-        assert np.allclose(meanRT, rta.meanrt_)
-        assert np.allclose(meanAcc, rta.meanacc_)
+        assert np.allclose(meanRT, rta.mean_rt_)
+        assert np.allclose(meanAcc, rta.mean_accuracy_)
     else:
         with pytest.raises(ValueError):
             rta.fit(test_df.rt, test_df.accuracy)
