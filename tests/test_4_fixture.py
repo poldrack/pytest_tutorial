@@ -23,8 +23,8 @@ def simulated_data(params):
 def test_rtanalysis_fit(simulated_data, params):
     rta = RTAnalysis()
     rta.fit(simulated_data.rt, simulated_data.accuracy)
-    assert np.allclose(params["meanRT"], rta.meanrt_)
-    assert np.allclose(params["meanAcc"], rta.meanacc_)
+    assert np.allclose(params["meanRT"], rta.mean_rt_)
+    assert np.allclose(params["meanAcc"], rta.mean_accuracy_)
 
 
 def test_rtanalysis_checkfail(simulated_data, params):

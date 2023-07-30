@@ -1,83 +1,118 @@
-"""example function to analyze reaction times
-- given a data frame with RT and accuracy,
-compute mean RT for correct trials and mean accuracy
+"""Example class to analyze reaction times.
+
+Given a data frame with RT and accuracy, compute mean RT for correct trials and
+mean accuracy.
 """
-# %%
 import pandas as pd
 
 
-# %%
 class RTAnalysis:
-    """[summary]"""
+    """Response time (RT) analysis."""
 
     def __init__(self, outlier_cutoff_sd=None):
-        """
-        RT analysis
+        """Initialize a new RTAnalysis instance.
 
-        Parameters:
-        -----------
-        outlier_cutoff_sd: standard deviation cutoff for long RT outliers (default: no cutoff)
+        Parameters
+        ----------
+        outlier_cutoff_sd : float, optional
+            Standard deviation cutoff for long RT outliers, by default None
         """
         self.outlier_cutoff_sd = outlier_cutoff_sd
-        self.meanrt_ = None
-        self.meanacc_ = None
+        self.mean_rt_ = None
+        self.mean_accuracy_ = None
 
     def fit(self, rt, accuracy, verbose=True):
-        """[summary]
+        """Fit response time to accuracy.
 
-        Args:
-            rt (Series of floats): response times for each trial
-            accuracy (Series of booleans): accuracy for each trial
+        Parameters
+        ----------
+        rt : pd.Series
+            Response time per trial
+        accuracy : pd.Series
+            Accuracy per trial
+        verbose : bool, optional
+            Whether to print verbose output or not, by default True
+
+        Raises
+        ------
+        ValueError
+            RT/accuracy length mismatch
+        ValueError
+            Accuracy is 0
         """
-
         rt = self._ensure_series_type(rt)
         accuracy = self._ensure_series_type(accuracy)
 
+        self._validate_length(rt, accuracy)
+
+        # Ensure that accuracy values are boolean.
+        assert accuracy.dtype == bool
+
+        rt = self.reject_outlier_rt(rt, verbose=verbose)
+
+        self.mean_accuracy_ = accuracy.mean()
         try:
-            assert rt.shape[0] == accuracy.shape[0]
+            assert self.mean_accuracy_ > 0
         except AssertionError as e:
-            raise ValueError("rt and accuracy must be the same length!") from e
-
-        # ensure that accuracy values are boolean
-        assert not set(accuracy.unique()).difference([True, False])
-
-        if self.outlier_cutoff_sd is not None:
-            cutoff = rt.std() * self.outlier_cutoff_sd
-            if verbose:
-                print(f"outlier rejection excluded {(rt > cutoff).sum()} trials")
-            rt = rt.mask(rt > cutoff)
-
-        self.meanacc_ = accuracy.mean()
-        try:
-            assert self.meanacc_ > 0
-        except AssertionError as e:
-            raise ValueError("accuracy is zero") from e
+            raise ValueError("Accuracy is zero!") from e
 
         rt = rt.mask(~accuracy)
-        self.meanrt_ = rt.mean()
+        self.mean_rt_ = rt.mean()
 
         try:
             assert rt.min() >  0
         except:
             raise ValueError( "negative response times found")
         if verbose:
-            print(f"mean RT: {self.meanrt_}")
-            print(f"mean accuracy: {self.meanacc_}")
+            print(f"mean RT: {self.mean_rt_}")
+            print(f"mean accuracy: {self.mean_accuracy_}")
+    
+    @staticmethod
+    def _validate_length(rt, accuracy):
+        """Validate response time and accuracy series lengths.
+
+        Parameters
+        ----------
+        rt : pd.Series
+            Response time values
+        accuracy : _type_
+            Accuracy values
+
+        Raises
+        ------
+        ValueError
+            Length mismatch
+        """
+        same_length = rt.shape[0] == accuracy.shape[0]
+        try:
+            assert same_length
+        except AssertionError as e:
+            raise ValueError("RT and accuracy must be the same length!") from e
+
 
     @staticmethod
     def _ensure_series_type(var):
-        """return variable as a pandas Series or raise exception if
-        not possible
+        """Return variable as a pandas Series.
 
-        Args:
-            var (array-like): variable to convert
+        Parameters
+        ----------
+        var : Iterable
+            Variable to be converted
 
-        Returns:
-            series (pandas Series): converted variable
+        Returns
+        -------
+        pd.Series
+            Variable values as a pandas Series
         """
-
-        if type(var) is not pd.core.series.Series:
+        if not isinstance(var, pd.Series):
             var = pd.Series(var)
         return var
 
-# %%
+    def reject_outlier_rt(self, rt, verbose=True):
+        if self.outlier_cutoff_sd is None:
+            return rt
+        cutoff = rt.std() * self.outlier_cutoff_sd
+        if verbose:
+            n_excluded = (rt > cutoff).sum()
+            print(f"Outlier rejection excluded {n_excluded} trials.")
+        return rt.mask(rt > cutoff)        
