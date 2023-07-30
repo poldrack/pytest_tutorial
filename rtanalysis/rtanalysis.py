@@ -56,6 +56,10 @@ class RTAnalysis:
         rt = rt.mask(~accuracy)
         self.meanrt_ = rt.mean()
 
+        try:
+            assert rt.min() >  0
+        except:
+            raise ValueError( "negative response times found")
         if verbose:
             print(f"mean RT: {self.meanrt_}")
             print(f"mean accuracy: {self.meanacc_}")
@@ -75,3 +79,5 @@ class RTAnalysis:
         if type(var) is not pd.core.series.Series:
             var = pd.Series(var)
         return var
+
+# %%
