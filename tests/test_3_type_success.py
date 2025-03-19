@@ -12,4 +12,4 @@ def test_dataframe_error_with_raises():
     rta = RTAnalysis()
     test_df = generate_test_df(2, 1, 0.8)
     with pytest.raises(ValueError):
-        rta.fit(test_df.rt, test_df.accuracy)
+        rta.fit(test_df.rt, test_df.accuracy.loc[1:])
