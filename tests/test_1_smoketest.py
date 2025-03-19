@@ -1,5 +1,5 @@
-"""test suite for rtanalysis
-"""
+"""test suite for rtanalysis"""
+
 from rtanalysis.rtanalysis import RTAnalysis
 
 

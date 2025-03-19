@@ -4,6 +4,7 @@ test for rtanalysis
 and make sure that the function properly raises
 and exception is accuracy is zero
 """
+
 import numpy as np
 import pytest
 from rtanalysis.generate_testdata import generate_test_df

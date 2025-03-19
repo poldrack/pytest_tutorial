@@ -2,6 +2,7 @@
 test for rtanalysis
 - in this test, we will ensure that the function raises a ValueError
 """
+
 import pytest
 from rtanalysis.generate_testdata import generate_test_df
 from rtanalysis.rtanalysis import RTAnalysis

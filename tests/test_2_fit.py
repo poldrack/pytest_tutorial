@@ -3,6 +3,7 @@ test for rtanalysis
 - in this test, we will create a simulated dataset and fit
 it, ensuring that the answers are correct
 """
+
 import numpy as np
 from rtanalysis.generate_testdata import generate_test_df
 from rtanalysis.rtanalysis import RTAnalysis
