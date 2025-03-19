@@ -17,10 +17,15 @@ from rtanalysis.rtanalysis import RTAnalysis
 def test_rtanalysis_parameteric(meanRT, sdRT, meanAcc):
     test_df = generate_test_df(meanRT, sdRT, meanAcc)
     rta = RTAnalysis()
-    if meanAcc > 0:
+    if min(test_df.rt) <= 0:
+        # make sure it catches the rt < 0 error
+        with pytest.raises(ValueError):
+            rta.fit(test_df.rt, test_df.accuracy)
+    elif meanAcc > 0:
         rta.fit(test_df.rt, test_df.accuracy)
         assert np.allclose(meanRT, rta.mean_rt_)
         assert np.allclose(meanAcc, rta.mean_accuracy_)
     else:
+        # make sure it catches the zero accuracy error
         with pytest.raises(ValueError):
             rta.fit(test_df.rt, test_df.accuracy)
