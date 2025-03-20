@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "Russell Poldrack", email = "poldrack@gmail.com" }
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.10"
 dependencies = [
     "coverage>=7.7.0",
     "flake8>=7.1.2",
